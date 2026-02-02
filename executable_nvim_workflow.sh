@@ -1,0 +1,102 @@
+#!/bin/bash
+
+
+CURRENT_PATH="$HOME"
+
+while [ -z $CHOOSE_PATH ]; do 
+	# Avoir une liste de fichiers du répertoire courant
+	
+	echo "󰣞  Nouveau dossier" > /tmp/fileselect
+	echo "  Utiliser ce dossier" >> /tmp/fileselect
+	echo "󰊢  Cloner depuis GIT" >> /tmp/fileselect	
+	echo "   ----" >> /tmp/fileselect
+	echo "  .." >> /tmp/fileselect 
+	echo 
+	fd . $CURRENT_PATH --max-depth=1 -t d -x basename {} | sed 's/^/  /' >> /tmp/fileselect
+	CHOICE=$(cat /tmp/fileselect | fzf --print-query)
+	CHOICE=$(echo "$CHOICE" | cut -c 4-)
+	LINES=$(echo "$CHOICE" | wc -l | xargs)
+
+	echo "fzf outputed $LINES lines."
+	if [[ $LINES == "2" ]]; then
+		CHOICE=$(echo "$CHOICE" | tail -n 1)
+	else
+		CHOICE=$(echo "$CHOICE" | head -n 1)
+	fi
+	echo "You chose $CHOICE"	
+	if [ -z $CHOICE ]; then
+		# Aborting program
+		CHOOSE_PATH="true"
+		ABORT="true"
+		echo "Aborting..."
+	elif [[ $CHOICE == "----" ]]; then
+		# Do nothing
+		echo
+	elif [[ $CHOICE == ".." && $CURRENT_PATH != "/" ]]; then
+		# Revert the path 
+		CURRENT_PATH=$(dirname $CURRENT_PATH)
+		echo "Going up. New path is $CURRENT_PATH"
+
+	elif [[ $CHOICE == "Cloner depuis GIT" ]]; then
+
+		clear
+
+		while [ -z $GIT_SUCCESS ]; do
+			echo "  $CURRENT_PATH"
+			echo -n " -  : "
+			read REPO
+			echo -n " - 󰣞 : "
+			read GIT_PATH
+
+			REPO=$(echo $REPO | cut -d ' ' -f 1)
+			GIT_PATH=$(echo $GIT_PATH | cut -d ' ' -f 1)
+
+			echo "git clone $REPO $GIT_PATH"
+			if [ -z $GIT_PATH ]; then
+				DESTINATION=$(python3 -c "import os; print(os.path.normpath('$CURRENT_PATH/$(basename $REPO)'))")
+			else
+				DESTINATION=$(python3 -c "import os; print(os.path.normpath('$CURRENT_PATH/$GIT_PATH'))")
+			fi
+
+			git clone $REPO $DESTINATION
+
+			if [[ $? == "0" ]]; then
+				GIT_SUCCESS="true"
+			
+				CURRENT_PATH=$DESTINATION
+		
+			else
+				echo "Quelque chose n'a pas fonctionné. Appuyez sur Entrée pour réessayer."
+				read -p
+			fi
+		done
+
+	elif [[ $CHOICE == "Nouveau dossier" ]]; then
+		# Chose a filename
+		
+		MKDIR_SUCCESS="1"
+		while [[ $MKDIR_SUCCESS != "0" ]]; do
+			clear
+			echo "Entrez un nom de dossier:"
+			read filename
+			echo "Création du dossier $filename"
+			mkdir $(python3 -c "import os; print(os.path.normpath('$CURRENT_PATH/$filename'))")
+			echo "Retour $?"
+			MKDIR_SUCCESS=$?
+		done
+
+		CURRENT_PATH=$(realpath "$CURRENT_PATH/$filename")
+		echo "Created a folder named $file. New path is $CURRENT_PATH" 
+	elif [[ $CHOICE == "Utiliser ce dossier" ]]; then
+		CHOOSE_PATH="true"
+		echo "Using dir $CURRENT_PATH"
+	else
+		echo "Current path is $CURRENT_PATH. Path is $CHOICE"
+		CURRENT_PATH=$(realpath "$CURRENT_PATH/$CHOICE")
+		echo "Changing dir. New path is $CURRENT_PATH"
+	fi
+done
+		
+if [ -z $ABORT ]; then
+	nvim $CURRENT_PATH
+fi
