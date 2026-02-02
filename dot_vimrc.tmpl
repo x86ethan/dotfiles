@@ -15,6 +15,13 @@ Plug 'morhetz/gruvbox'
 call plug#end()
 
 
+# Configuration Linux
+{{ if eq .chezmoi.os "linux" -}}
+set background=dark
+{{ end -}}
+
+# Configuration macOS
+{{ if eq .chezmoi.os "darwin" -}}
 function! SetSystemTheme() 
 	
 	let l:style = system('defaults read -g AppleInterfaceStyle 2>/dev/null')
