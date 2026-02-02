@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Neovim
+GenericName=Éditeur de Texte
+Exec=alacritty -e /home/x86ethan/nvim_workflow.sh
+Icon=nvim
+Type=Application
+Categories=Utility
