@@ -1,0 +1,47 @@
+
+# Start a terminal 
+super + Return
+	alacritty
+
+# Show rofi
+super + @space
+	rofi -show drun
+
+# Rofi power menu
+super + p
+	~/.config/rofi/powermenu.sh
+# Close a window
+super + w
+	bspc node -c  
+
+# Restart BSPWM
+super + shift + r 
+	bspc wm -r
+
+# Move focus
+super + {Left,Right,Up,Down}
+	bspc node -f {west,east,north,south}
+
+# Swap window
+super + shift + {Left,Right,Up,Down}
+	bspc node -s {west,east,north,south}
+
+# Change desktop
+super + {ampersand,eacute,quotedbl,apostrophe,parenleft,minus,egrave,underscore,ccedilla,agrave}
+	bspc desktop -f {1,2,3,4,5,6,7,8,9,10}
+
+super + shift + {ampersand,eacute,quotedbl,apostrophe,parenleft,minus,egrave,underscore,ccedilla,agrave}
+	bspc node -d {1,2,3,4,5,6,7,8,9,10}
+
+# Change window state
+super + {f,shift + f,t}
+	bspc node -t {floating,fullscreen,tiled}
+
+
+# Expand a window 
+super + ctrl + {Left,Right,Up,Down}
+	bspc node -z {left -20 0,right 20 0,top 0 -20,bottom 0 20}
+
+super + ctrl + shift + {Right,Left,Down,Up}
+	bspc node -z {left 20 0,right -20 0,top 0 20,bottom 0 -20}
+

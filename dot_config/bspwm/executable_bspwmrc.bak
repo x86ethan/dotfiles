@@ -1,0 +1,27 @@
+#!/bin/bash
+
+
+bspc config border_width 1
+bspc config window_gap 15
+
+# Configuration des moniteurs
+bspc monitor -d 1 2 3 4 5 6 7 8 9 10
+
+# Clavier en français (très important)
+setxkbmap fr
+
+# Xsetroot
+xrdb -merge ~/.Xresources
+xsetroot -cursor_name "left_ptr"
+
+# Fonds d'écran
+nitrogen --restore 
+
+picom &
+
+# SXHKD
+killall sxhkd
+sxhkd &
+
+# Polybar
+polybar --reload bar
