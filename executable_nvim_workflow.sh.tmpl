@@ -1,5 +1,10 @@
 #!/bin/bash
 
+{{ if eq .chezmoi.os "darwin" -}}
+# Comme macOS est un gros con de merde qui ne sait pas utiliser les profils correctement 
+~/.bin/initterm.sh
+{{ end -}}
+
 {{ if eq .chezmoi.os "linux" -}}
 # Mettre la fenêtre en floating
 bspc node -t floating
