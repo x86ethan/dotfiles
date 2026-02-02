@@ -1,22 +1,36 @@
 #!/bin/bash
 
+{{ if eq .chezmoi.os "linux" -}}
+# Mettre la fenêtre en floating
+bspc node -t floating
+{{ end -}}
 
 CURRENT_PATH="$HOME"
 
 while [ -z $CHOOSE_PATH ]; do 
 	# Avoir une liste de fichiers du répertoire courant
-	
+{{ if eq .chezmoi.os  "darwin" -}}	
 	echo "󰣞  Nouveau dossier" > /tmp/fileselect
 	echo "  Utiliser ce dossier" >> /tmp/fileselect
 	echo "󰊢  Cloner depuis GIT" >> /tmp/fileselect	
+{{ else if eq .chezmoi.os "linux" -}}
+	echo "󰣞  Nouveau dossier" > /tmp/fileselect
+	echo "  Utiliser ce dossier" >> /tmp/fileselect
+	echo "󰊢  Cloner depuis GIT" >> /tmp/fileselect	
+{{ end -}}
 	echo "   ----" >> /tmp/fileselect
 	echo "  .." >> /tmp/fileselect 
 	echo 
 	fd . $CURRENT_PATH --max-depth=1 -t d -x basename {} | sed 's/^/  /' >> /tmp/fileselect
 	CHOICE=$(cat /tmp/fileselect | fzf --print-query)
-	CHOICE=$(echo "$CHOICE" | cut -c 4-)
-	LINES=$(echo "$CHOICE" | wc -l | xargs)
 
+{{ if eq .chezmoi.os "linux" -}}
+	CHOICE=$(echo "$CHOICE" | cut -c 6-)
+{{ else if eq .chezmoi.os "darwin" -}}
+	CHOICE=$(echo "$CHOICE" | cut -c 4-)
+{{ end -}}
+
+	LINES=$(echo "$CHOICE" | wc -l | xargs)
 	echo "fzf outputed $LINES lines."
 	if [[ $LINES == "2" ]]; then
 		CHOICE=$(echo "$CHOICE" | tail -n 1)
@@ -24,7 +38,7 @@ while [ -z $CHOOSE_PATH ]; do
 		CHOICE=$(echo "$CHOICE" | head -n 1)
 	fi
 	echo "You chose $CHOICE"	
-	if [ -z $CHOICE ]; then
+	if [ -z "$CHOICE" ]; then
 		# Aborting program
 		CHOOSE_PATH="true"
 		ABORT="true"
@@ -37,7 +51,7 @@ while [ -z $CHOOSE_PATH ]; do
 		CURRENT_PATH=$(dirname $CURRENT_PATH)
 		echo "Going up. New path is $CURRENT_PATH"
 
-	elif [[ $CHOICE == "Cloner depuis GIT" ]]; then
+	elif [[ $CHOICE == *Cloner\ depuis\ GIT ]]; then
 
 		clear
 
@@ -71,7 +85,7 @@ while [ -z $CHOOSE_PATH ]; do
 			fi
 		done
 
-	elif [[ $CHOICE == "Nouveau dossier" ]]; then
+	elif [[ $CHOICE == *Nouveau\ dossier ]]; then
 		# Chose a filename
 		
 		MKDIR_SUCCESS="1"
@@ -87,7 +101,7 @@ while [ -z $CHOOSE_PATH ]; do
 
 		CURRENT_PATH=$(realpath "$CURRENT_PATH/$filename")
 		echo "Created a folder named $file. New path is $CURRENT_PATH" 
-	elif [[ $CHOICE == "Utiliser ce dossier" ]]; then
+	elif [[ $CHOICE == *Utiliser\ ce\ dossier ]]; then
 		CHOOSE_PATH="true"
 		echo "Using dir $CURRENT_PATH"
 	else
@@ -98,5 +112,14 @@ while [ -z $CHOOSE_PATH ]; do
 done
 		
 if [ -z $ABORT ]; then
+
+{{ if eq .chezmoi.os "linux" -}}
+	# Remettre la fenêtre en tiled
+	bspc node -t tiled
+{{ end -}}
+	
 	nvim $CURRENT_PATH
 fi
+
+
+
