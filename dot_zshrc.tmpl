@@ -50,12 +50,12 @@ bindkey "\e[1;5C" forward-word
 bindkey "\e[H" beginning-of-line
 bindkey "\e[F" end-of-line
 
-{{ end -}}
+
 
 # ===================
 # CONFIGURATION MACOS
 # ===================
-{{ if eq .chezmoi.os "darwin" -}}
+{{ else if eq .chezmoi.os "darwin" -}}
 
 # Sudo prompt
 export SUDO_PROMPT="🔐 " 

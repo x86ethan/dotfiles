@@ -15,12 +15,12 @@ Plug 'morhetz/gruvbox'
 call plug#end()
 
 
-# Configuration Linux
+" Configuration Linux
 {{ if eq .chezmoi.os "linux" -}}
 set background=dark
 {{ end -}}
 
-# Configuration macOS
+" Configuration macOS
 {{ if eq .chezmoi.os "darwin" -}}
 function! SetSystemTheme() 
 	
@@ -42,7 +42,6 @@ endfunction
 
 let g:gruvbox_transparent_bg=1
 
-colorscheme gruvbox
 " let g:gruvbox_contrast_dark='hard'
 call SetSystemTheme()
 
@@ -51,3 +50,8 @@ augroup ThemeSync
     autocmd!
     autocmd FocusGained,BufEnter,ShellCmdPost * call SetSystemTheme()
 augroup END
+
+{{ end -}}
+
+
+colorscheme gruvbox
