@@ -1,0 +1,8 @@
+{{ if eq .chezmoi.os "darwin" }}
+.config/bspwm
+.config/sxhkd
+.config/polybar
+.config/gtk-3.0
+.config/gtk-2.0
+.config/rofi
+{{ end }}
