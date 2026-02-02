@@ -1,0 +1,2 @@
+alt + cmd - r : $HOME/.bin/initterm.sh
+alt + cmd - t : osascript -e 'tell application "Terminal" to do script ""' -e 'tell application "Terminal" to activate'

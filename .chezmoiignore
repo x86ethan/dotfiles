@@ -1,6 +1,8 @@
 .config/nvim/lazy-lock.json
 
-{{ if eq .chezmoi.os "darwin" }}
+{{ if eq .chezmoi.os "linux" }}
+.skhdrc
+{{ else if eq .chezmoi.os "darwin" }}
 .config/bspwm
 .config/sxhkd
 .config/polybar
