@@ -1,0 +1,46 @@
+syntax on
+filetype on
+
+set autoindent
+set noswapfile
+set number
+set termguicolors
+set clipboard=unnamed 
+
+call plug#begin()
+
+" List your plugins here
+Plug 'morhetz/gruvbox'
+
+call plug#end()
+
+
+function! SetSystemTheme() 
+	
+	let l:style = system('defaults read -g AppleInterfaceStyle 2>/dev/null')
+	" On nettoie le retour (suppression des sauts de ligne)
+    let l:style = substitute(l:style, '\n', '', 'g')
+
+    if l:style ==# 'Dark'
+        set background=dark
+    else
+        set background=light
+    endif
+
+    " On ré-applique Gruvbox pour forcer le rafraîchissement des couleurs
+    " et on remet la transparence que MacVim a tendance à écraser
+    colorscheme gruvbox
+
+endfunction
+
+let g:gruvbox_transparent_bg=1
+
+colorscheme gruvbox
+" let g:gruvbox_contrast_dark='hard'
+call SetSystemTheme()
+
+
+augroup ThemeSync
+    autocmd!
+    autocmd FocusGained,BufEnter,ShellCmdPost * call SetSystemTheme()
+augroup END
